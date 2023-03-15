@@ -1,0 +1,5 @@
+package edu.mx.utvt.data.entities;
+
+public class Publicacion {
+
+}

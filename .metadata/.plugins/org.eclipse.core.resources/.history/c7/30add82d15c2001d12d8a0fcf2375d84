@@ -1,0 +1,150 @@
+package edu.mx.utvt.data.entities;
+
+import java.io.Serializable;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Inheritance (strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@Table (name="users")
+public abstract class User implements Serializable {
+	
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+//	private static final long serialVersionUID = 1404196032355826519L;
+    @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column (name = "username", nullable = false)
+    private String username;
+    @Column (name = "last_name", nullable = false)
+	private String last_name;
+    @Column (name = "birthday", nullable = false)
+	private String birthday;
+    @Column (name = "email", nullable = false)
+	private String email;
+    @Column (name = "status", nullable = false)
+	private Boolean status;
+    
+    
+    public Long getId() {
+    	return id;
+    }
+    
+    public void setId(Long id) {
+    	this.id = id;
+    }
+    
+    public String getUsername() {
+    	return username;
+    }
+    
+    public void setUsername(String username) {
+    	this.username = username;
+    }
+    
+    public String getLast_name() {
+    	return last_name;
+    }
+    
+    public void setLast_name(String last_name) {
+    	this.last_name = last_name;
+    }
+    
+    public String getBirthday() {
+    	return birthday;
+    }
+    
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+    
+    public User() {
+    	
+    }
+    
+    public User(String username, String last_name, String birthday, String email, Boolean status){
+        super();
+        this.username = username;
+        this.last_name = last_name;
+        this.birthday = birthday;
+        this.email = email;
+        this.status = status;
+    }
+    
+    public User(Long id,String username, String last_name, String birthday, String email, Boolean status, User user){
+        super();
+        this.id = id;
+        this.username = username;
+        this.last_name = last_name;
+        this.birthday = birthday;
+        this.email = email;
+        this.status = status;
+    }
+
+    public User(User user) {
+    	super();
+    	this.id = user.getId();
+        this.username = user.getUsername();
+        this.last_name = user.getLast_name();
+        this.birthday = user.getBirthday();
+        this.email = user.getEmail();
+        this.status = user.getStatus();
+    	
+    }
+    
+  /*  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user; */
+    
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+    
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "tr_user_categorias",
+    	joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id"),
+    	inverseJoinColumns = @JoinColumn(name = "categoria_id", referencedColumnName = "id"))
+    private List<Categoria> categorias;
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    public List<Publicacion> publicaciones;
+   
+    
+}
